@@ -9,10 +9,11 @@
         <div id="myMap" style="position:relative; height:400px;"></div>
     </div>
 </div>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<button type="button" onclick="location.href='@Url.Action("Create","Rumah")'" class="btn btn-success">
+    <span class="glyphicon glyphicon-plus-sign">Create</span>
+</button>
+<hr />
+<table id="Rumah" class="display" style="width:100%">
     <thead>
         <tr>
             <th>
@@ -24,7 +25,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Alamat)
             </th>
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -52,6 +53,9 @@
 
 @section Scripts {
     <script type="text/javascript">
+        $(document).ready(function () {
+            $('#Rumah').DataTable();
+        });
         function LoadMap() {
             map = new Microsoft.Maps.Map('#myMap', {
                 credentials: KeyAPI,
