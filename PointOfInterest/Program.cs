@@ -22,9 +22,4 @@ namespace PointOfInterest
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
     }
-
-    public class Db : DbContext
-    {
-
-    }
 }
