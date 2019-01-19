@@ -6,9 +6,6 @@
 }
 <div class="row">
     <div class="col-lg-12">
-        <div class="form-group">
-            <input type="button" value="Refresh" class="btn btn-primary" onclick="LoadLoc()" />
-        </div>
         <div id="myMap" style="position:relative; height:400px;"></div>
     </div>
 </div>
@@ -55,18 +52,17 @@
 
 @section Scripts {
     <script type="text/javascript">
-        var map = null;
         function LoadMap() {
             map = new Microsoft.Maps.Map('#myMap', {
-                credentials: "ArElXif6FemUk7MiLv0bV5cZiTcWSO9mkz8JgM4ahhwje3v6Ns022XuXrffbtRJG",
+                credentials: KeyAPI,
             });
             map.setView({
                 mapTypeId: Microsoft.Maps.MapTypeId.road,
                 center: new Microsoft.Maps.Location(-6.914744, 107.609810),
                 zoom: 13
             });
+            LoadLoc();
         }
-        LoadMap();
         function LoadLoc() {
             var url = "/Rumah/GetLocations";
             $.getJSON(url, null, function (data) {
@@ -75,7 +71,7 @@
                 $.each(data, function (index, LocationData) {
                     var pushpin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(
                         LocationData.latitude,
-                        LocationData.longitude), { title:LocationData.name });
+                        LocationData.longitude), { title: LocationData.name, icon: 'https://www.bingmapsportal.com/Content/images/poi_custom.png' });
                     pins.push(pushpin);
                 });
                 map.entities.push(pins);

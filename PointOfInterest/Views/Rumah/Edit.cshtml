@@ -8,7 +8,7 @@
 <h4>Rumah</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-lg-6">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -24,23 +24,24 @@
             </div>
             <div class="form-group">
                 <label asp-for="Alamat" class="control-label"></label>
-                <input asp-for="Alamat" class="form-control" />
+                <textarea asp-for="Alamat" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="Alamat" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Latitude" class="control-label"></label>
-                <input asp-for="Latitude" class="form-control" />
+                <input asp-for="Latitude" type="hidden" class="form-control" />
                 <span asp-validation-for="Latitude" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Longitude" class="control-label"></label>
-                <input asp-for="Longitude" class="form-control" />
+                <input asp-for="Longitude" type="hidden" class="form-control" />
                 <span asp-validation-for="Longitude" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </form>
+    </div>
+    <div class="col-lg-6">
+        <div id="myMap" style="position:relative; height:400px;"></div>
     </div>
 </div>
 
@@ -49,5 +50,49 @@
 </div>
 
 @section Scripts {
+    <script type='text/javascript'>
+        var lat = $("#Latitude").val();
+        var long = $("#Longitude").val();
+        function LoadMap() {
+            map = new Microsoft.Maps.Map('#myMap', {
+                credentials: KeyAPI,
+            });
+            map.setView({
+                mapTypeId: Microsoft.Maps.MapTypeId.road,
+                center: new Microsoft.Maps.Location(lat, long),
+                zoom: 13
+            });
+            var center = map.getCenter();
+            var Events = Microsoft.Maps.Events;
+            var Location = Microsoft.Maps.Location;
+            var Pushpin = Microsoft.Maps.Pushpin;
+            var pins = [
+                new Pushpin(new Location(center.latitude, center.longitude),
+                    {
+                        color: '#f00',
+                        draggable: true,
+                        icon: 'https://www.bingmapsportal.com/Content/images/poi_custom.png'
+                    }),
+            ];
+            map.entities.push(pins);
+            Events.addHandler(pins[0], 'dragend', function () {
+                var pin_location = pins[0].getLocation();
+                $("#Latitude").val(pin_location.latitude);
+                $("#Longitude").val(pin_location.longitude);
+                Microsoft.Maps.loadModule('Microsoft.Maps.Search', function () {
+                    var searchManager = new Microsoft.Maps.Search.SearchManager(map);
+                    var reverseGeocodeRequestOptions = {
+                        location: new Microsoft.Maps.Location(pin_location.latitude, pin_location.longitude),
+                        callback: function (answer, userData) {
+                            //map.setView({ bounds: answer.bestView });
+                            $("#Alamat").val(answer.address.formattedAddress);
+                        }
+                    };
+                    searchManager.reverseGeocode(reverseGeocodeRequestOptions);
+                });
+            });
+        }
+    </script>
+    <script type="text/javascript" src="https://www.bing.com/api/maps/mapcontrol?callback=LoadMap" async defer></script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
