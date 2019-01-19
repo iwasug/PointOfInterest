@@ -150,5 +150,16 @@ namespace PointOfInterest.Controllers
         {
             return _context.Rumah.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> GetLocations()
+        {
+            var locations = new List<Locations>();
+            var r = await _context.Rumah.ToListAsync();
+            foreach(var each in r)
+            {
+                locations.Add(new Locations(double.Parse(each.Latitude), double.Parse(each.Longitude), each.Nama));
+            }
+            return Json(locations);
+        }
     }
 }
