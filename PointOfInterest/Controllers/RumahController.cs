@@ -42,6 +42,24 @@ namespace PointOfInterest.Controllers
             return View(rumah);
         }
 
+        // GET: Rumahs/Rute/5
+        public async Task<IActionResult> Rute(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var rumah = await _context.Rumah
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (rumah == null)
+            {
+                return NotFound();
+            }
+
+            return View(rumah);
+        }
+
         // GET: Rumahs/Create
         public IActionResult Create()
         {

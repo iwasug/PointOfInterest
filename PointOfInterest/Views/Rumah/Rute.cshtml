@@ -1,0 +1,67 @@
+﻿@model PointOfInterest.Models.Rumah
+
+@{
+    ViewData["Title"] = "Rute";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Rute</h2>
+
+<div>
+    <h4>Rumah</h4>
+    <hr />
+    <input asp-for="Longitude" type="hidden" class="form-control" readonly="readonly" />
+    <input asp-for="Latitude" type="hidden" class="form-control" readonly="readonly" />
+    <input asp-for="Nama" type="hidden" class="form-control" readonly="readonly" />
+</div>
+<div class="row">
+    <div class="col-lg-8">
+        <div id="myMap" style="position:relative; height:600px;"></div>
+    </div>
+    <div class="col-lg-4">
+        <div id='printoutPanel'></div>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+@section Scripts {
+    <script type='text/javascript'>
+        var lat = $("#Latitude").val();
+        var long = $("#Longitude").val();
+        var nama = $("#Nama").val();
+        function LoadMap() {
+            map = new Microsoft.Maps.Map('#myMap', {
+                credentials: KeyAPI,
+            });
+            navigator.geolocation.getCurrentPosition(function (position) {
+                $("#MyLatitude").val(position.coords.latitude);
+                $("#MyLongitude").val(position.coords.longitude);
+                CariRute(lat, long, position.coords.latitude, position.coords.longitude);
+            });
+            map.setView({
+                mapTypeId: Microsoft.Maps.MapTypeId.road,
+                center: new Microsoft.Maps.Location(-6.914744, 107.609810),
+                zoom: 13
+            });
+           
+        }
+
+        function CariRute(lat, Long, my_lat, my_long) {
+            Microsoft.Maps.loadModule('Microsoft.Maps.Directions', function () {
+                var directionsManager = new Microsoft.Maps.Directions.DirectionsManager(map);
+                alert(lat + '-' + Long);
+                directionsManager.setRequestOptions({ routeMode: Microsoft.Maps.Directions.RouteMode.driving });
+                var waypoint1 = new Microsoft.Maps.Directions.Waypoint({ address: nama, location: new Microsoft.Maps.Location(lat, long) });
+                var waypoint2 = new Microsoft.Maps.Directions.Waypoint({ address: 'Bandung', location: new Microsoft.Maps.Location(my_lat, my_long) });
+                directionsManager.addWaypoint(waypoint2);
+                directionsManager.addWaypoint(waypoint1);
+                directionsManager.setRenderOptions({ itineraryContainer: document.getElementById('printoutPanel') });
+                directionsManager.calculateDirections();
+            });
+        }
+    </script>
+    <script type="text/javascript" src="https://www.bing.com/api/maps/mapcontrol?callback=LoadMap" async defer></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
