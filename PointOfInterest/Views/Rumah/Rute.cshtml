@@ -50,10 +50,9 @@
         function CariRute(lat, Long, my_lat, my_long) {
             Microsoft.Maps.loadModule('Microsoft.Maps.Directions', function () {
                 var directionsManager = new Microsoft.Maps.Directions.DirectionsManager(map);
-                alert(lat + '-' + Long);
                 directionsManager.setRequestOptions({ routeMode: Microsoft.Maps.Directions.RouteMode.driving });
                 var waypoint1 = new Microsoft.Maps.Directions.Waypoint({ address: nama, location: new Microsoft.Maps.Location(lat, long) });
-                var waypoint2 = new Microsoft.Maps.Directions.Waypoint({ address: 'Bandung', location: new Microsoft.Maps.Location(my_lat, my_long) });
+                var waypoint2 = new Microsoft.Maps.Directions.Waypoint({ address: 'My Location', location: new Microsoft.Maps.Location(my_lat, my_long) });
                 directionsManager.addWaypoint(waypoint2);
                 directionsManager.addWaypoint(waypoint1);
                 directionsManager.setRenderOptions({ itineraryContainer: document.getElementById('printoutPanel') });
