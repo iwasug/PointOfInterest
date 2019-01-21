@@ -179,5 +179,32 @@ namespace PointOfInterest.Controllers
             }
             return Json(locations);
         }
+
+        [Route("Rumah/HitungJarak/{Id}/{Lat}/{Long}")]
+        public async Task<IActionResult> HitungJarak(Guid? id, double Lat, double Long)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var rumah = await _context.Rumah.FindAsync(id);
+            Position pos1 = new Position
+            {
+                Latitude = double.Parse(rumah.Latitude),
+                Longitude = double.Parse(rumah.Longitude)
+            };
+            Position pos2 = new Position
+            {
+                Latitude = Lat,//-6.914744;
+                Longitude = Long//107.609810;
+            };
+            if (rumah == null)
+            {
+                return NotFound();
+            }
+            Haversine hv = new Haversine();
+            double result = Math.Round(hv.Distance(pos1, pos2, DistanceType.Kilometers),2);
+            return Json(result.ToString() + " KM");
+        }
     }
 }
